@@ -29,3 +29,26 @@ resource "aws_subnet" "public-subnet2" {
     aws_flow_log.logs
   ] 
 }
+
+resource "aws_route_table" "terraform-public" {
+    vpc_id = "${aws_vpc.kumar.id}"
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_internet_gateway.kumar.id}"
+    }
+
+    tags = {
+        Name = "${var.vpc_name}-rt"
+    }
+}
+
+resource "aws_route_table_association" "public-subnet1" {
+subnet_id = "${aws_subnet.public-subnet1.id}"
+route_table_id = "${aws_route_table.terraform-public.id}"
+}
+resource "aws_route_table_association" "public-subnet2" {
+subnet_id = "${aws_subnet.public-subnet2.id}"
+route_table_id = "${aws_route_table.terraform-public.id}"
+}
+
